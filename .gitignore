@@ -1,7 +1,2 @@
 .env
-base-instructions.txt
-context.json
-context.json-1.txt
-context.json-2.txt
-context.json-3.txt
-context.json-4.txt
+context_logs

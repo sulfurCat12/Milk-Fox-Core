@@ -16,7 +16,7 @@ async function trigger(input) {
   message.push(inputData)
 
   const response = await ollama.chat({
-  model: 'llama3:8b',
+  model: 'dolphin3:8b',
   messages: message,
   });
 
