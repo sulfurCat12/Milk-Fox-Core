@@ -1,2 +1,4 @@
 .env
+src/context.json
+context.json
 context_logs

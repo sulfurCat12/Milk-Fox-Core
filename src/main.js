@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 import foxoPing from './callback/ping.js';
-import chat from './callback/chat.js';
+import foxoChat from './callback/chat.js';
 
 const client = new Client({
     intents: [
@@ -19,7 +19,7 @@ client.on('clientReady', function (c) {
 });
 
 client.on('messageCreate',
-    chat
+    foxoChat
 );
 
 dotenv.config();

@@ -16,7 +16,8 @@
   "license": "ISC",
   "nodemonConfig": {
     "ignore": [
-      "src/context.json"
+      "*.json",
+      "src/"
     ]
   }
 }

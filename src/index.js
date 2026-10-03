@@ -1,33 +1,49 @@
 import ollama from 'ollama';
 import fs from 'fs';
-import discord from 'discord.js';
 
 const contextPath = './src/context.json';
 
 let rawContextData = fs.readFileSync(contextPath, 'utf-8');
 let contextData = JSON.parse(rawContextData);
 
-const message = [
-  ... JSON.parse(rawContextData, null, 2)
-];
+const messages = [...contextData];
 
 async function trigger(input) {
-  const inputData = { role: 'user', content: input}
-  message.push(inputData)
+    const userMessage = {
+        role: 'user',
+        content: input
+    };
 
-  const response = await ollama.chat({
-  model: 'dolphin3:8b',
-  messages: message,
-  });
+    messages.push(userMessage);
 
-  contextData.push(inputData, { role: 'assistant', content: response.message.content});
-  return response.message.content;
+    const response = await ollama.chat({
+        model: 'llama3.2:3b',
+        messages,
+        options: {
+            temperature: 0.9,
+            top_p: 0.9
+        }
+    });
+
+    const assistantMessage = {
+        role: 'assistant',
+        content: response.message.content
+    };
+
+    messages.push(assistantMessage);
+    fs.writeFileSync(
+        './context.json',
+        JSON.stringify(messages, null, 2),
+        'utf8'
+    );
+
+    return response.message.content;
 }
 
 export default function pull(input, callback) { 
     trigger(input).then(async (aiResponse) => {
         fs.writeFileSync(contextPath, JSON.stringify(contextData, null, 2), 'utf-8');
-        console.log(aiResponse);
         await callback(aiResponse);
+        console.log("Response: " + aiResponse);
     });
 }
