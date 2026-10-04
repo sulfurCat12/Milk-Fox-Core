@@ -1,7 +1,7 @@
 import ollama from 'ollama';
 import fs from 'fs';
 
-const contextPath = './src/context.json';
+const contextPath = 'src/context.json';
 
 let rawContextData = fs.readFileSync(contextPath, 'utf-8');
 let contextData = JSON.parse(rawContextData);
@@ -32,7 +32,7 @@ async function trigger(input) {
 
     messages.push(assistantMessage);
     fs.writeFileSync(
-        './context.json',
+        contextPath,
         JSON.stringify(messages, null, 2),
         'utf8'
     );
@@ -42,7 +42,6 @@ async function trigger(input) {
 
 export default function pull(input, callback) { 
     trigger(input).then(async (aiResponse) => {
-        fs.writeFileSync(contextPath, JSON.stringify(contextData, null, 2), 'utf-8');
         await callback(aiResponse);
         console.log("Response: " + aiResponse);
     });
