@@ -1,7 +1,7 @@
 import pull from '../index.js';
 
 export default async function foxoChat(message) {
-    // if (message.author.bot) { return; }
+    if (message.author.bot) { return; }
     // if (message.author.id !== "883299360350306314") { return; }
     
     const userPrompt = message.content;
