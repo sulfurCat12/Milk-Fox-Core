@@ -1,47 +1,67 @@
 import ollama from 'ollama';
 import fs from 'fs';
 
-const contextPath = 'src/context.json';
+const systemPath = 'src/llm/system-s1.txt';
 
-let rawContextData = fs.readFileSync(contextPath, 'utf-8');
-let contextData = JSON.parse(rawContextData);
+const systemMessage = {
+    role: 'system',
+    content: fs.readFileSync(systemPath, 'utf-8').trim()
+};
 
-const messages = [...contextData];
+function getConversation(userId) {
+    const path = `src/llm/conversations/${userId}.json`;
 
-async function trigger(input) {
-    const userMessage = {
+    if (!fs.existsSync(path)) {
+        return [];
+    }
+
+    return JSON.parse(fs.readFileSync(path, 'utf8'));
+}
+
+async function trigger(userId, usertag, input) {
+    const messages = getConversation(userId);
+
+    console.log("Prompt: " + input);
+
+    messages.push({
         role: 'user',
         content: input
+    });
+
+    const userMessage = {
+        role: 'system',
+        content: `The person you're talking to is ${usertag}.`
     };
 
-    messages.push(userMessage);
+    console.log("Processing...")
 
     const response = await ollama.chat({
         model: 'llama3.2:3b',
-        messages,
+        messages: [
+            systemMessage,
+            userMessage,
+            ...messages
+        ],
         options: {
             temperature: 0.9,
             top_p: 0.9
         }
     });
 
-    const assistantMessage = {
+    messages.push({
         role: 'assistant',
         content: response.message.content
-    };
+    });
 
-    messages.push(assistantMessage);
-    fs.writeFileSync(
-        contextPath,
-        JSON.stringify(messages, null, 2),
-        'utf8'
-    );
+    const path = `src/llm/conversations/${userId}.json`;
+
+    fs.writeFileSync(path, JSON.stringify(messages, null, 2), 'utf8');
 
     return response.message.content;
 }
 
-export default function pull(input, callback) { 
-    trigger(input).then(async (aiResponse) => {
+export default function pull(userId, usertag, input, callback) {
+    trigger(userId, usertag, input).then(async (aiResponse) => {
         await callback(aiResponse);
         console.log("Response: " + aiResponse);
     });

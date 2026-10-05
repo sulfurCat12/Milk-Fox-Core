@@ -8,5 +8,5 @@ export default async function foxoChat(message) {
     const callback = async (aiResponse) => {
         await message.reply(aiResponse);
     };
-    pull(userPrompt, callback);
+    pull(message.author.id, message.author.tag, userPrompt, callback);
 }
