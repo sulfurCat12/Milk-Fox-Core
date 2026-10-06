@@ -20,6 +20,14 @@ function getConversation(userId) {
 
 async function trigger(userId, usertag, input) {
     const messages = getConversation(userId);
+    const now = new Date();
+
+    const timeMessage = {
+        role: 'system',
+        content: `The current date and time is ${now.toLocaleString('en-US', {
+            timeZone: 'Asia/Manila'
+        })}.`
+    };
 
     console.log("Prompt: " + input);
 
@@ -40,6 +48,7 @@ async function trigger(userId, usertag, input) {
         messages: [
             systemMessage,
             userMessage,
+            timeMessage,
             ...messages
         ],
         options: {
