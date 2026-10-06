@@ -68,7 +68,7 @@ async function processOldMessages(userId, messages) {
 
     const expired = messages.filter(message => message.timestamp < cutoff);
 
-    const recent = messages.filter(message => message.timestamp >= cutoff);
+    const recent = messages.filter(message => message.timestamp >= cutoff).slice(-40);
 
     if (expired.length === 0) { return recent; }
 
