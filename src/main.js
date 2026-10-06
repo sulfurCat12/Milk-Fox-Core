@@ -1,8 +1,5 @@
-import { Client, GatewayIntentBits, AttachmentBuilder, MessageFlags, Embed, EmbedBuilder } from 'discord.js';
-import fs from 'fs';
-import path from 'path';
+import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
-import foxoPing from './callback/ping.js';
 import foxoChat from './callback/chat.js';
 
 const client = new Client({
